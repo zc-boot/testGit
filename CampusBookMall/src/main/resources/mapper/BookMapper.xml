@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zc.book.dao.BookMapper" >
+  <resultMap id="BaseResultMap" type="com.zc.book.pojo.Book" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="bookId" property="bookId" jdbcType="INTEGER" />
+    <result column="bookName" property="bookname" jdbcType="VARCHAR" />
+    <result column="bookImg" property="bookImg" jdbcType="VARCHAR" />
+    <result column="bookCategory" property="bookcategory" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="publishingHouse" property="publishinghouse" jdbcType="VARCHAR" />
+    <result column="printTimes" property="printtimes" jdbcType="VARCHAR" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="briefIntroduction" property="briefintroduction" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="stock" property="stock" />
+    <result column="bstate" property="bstate" />
+    <result column="publishdate" property="publishdate" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bookId, bookName, bookCategory, author,bookImg, publishingHouse, printTimes, createDate,
+    briefIntroduction, price,stock,bstate,publishdate
+  </sql>
+  <select id="queryAllBook" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from book
+  </select>
+  <select id="queryBook" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from book where bookid=#{bookid}
+  </select>
+  <select id="queryBookByType" resultMap="BaseResultMap" parameterType="com.zc.book.pojo.Book" >
+    select
+    <include refid="Base_Column_List" />
+    from book
+    <where>
+      <if test="bookname !=null and bookname!= ''">
+            bookName like concat('%',#{bookname},'%')
+      </if>
+      <if test="author !=null and author!= ''">
+        and author like concat('%',#{author},'%')
+      </if>
+      <if test="publishinghouse !=null and publishinghouse!= ''">
+        and publishingHouse like concat('%',#{publishinghouse},'%')
+      </if>
+      <if test="cateId !=null and cateId!= ''">
+        and bookCategory like  concat('%',#{cateId},'%')
+      </if>
+      <if test="price !=null and price!= ''">
+        and price &lt;=#{price}
+      </if>
+      <if test="stock !=null and stock!= ''">
+        and stock =#{stock}
+      </if>
+      <if test="bstate !=null and bstate!= ''">
+        and bstate=#{bstate}
+      </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.zc.book.pojo.Book" >
+    select 
+    <include refid="Base_Column_List" />
+    from book
+    where id = #{id,jdbcType=INTEGER}
+      and bookId = #{bookid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.zc.book.pojo.Book" >
+    delete from book
+    where id = #{id,jdbcType=INTEGER}
+      and bookId = #{bookid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zc.book.pojo.Book" >
+    insert into book (id, bookId, bookName, 
+      bookCategory, author, publishingHouse, 
+      printTimes, createDate, briefIntroduction, 
+      price)
+    values (#{id,jdbcType=INTEGER}, #{bookid,jdbcType=INTEGER}, #{bookname,jdbcType=VARCHAR}, 
+      #{bookcategory,jdbcType=TINYINT}, #{author,jdbcType=VARCHAR}, #{publishinghouse,jdbcType=VARCHAR}, 
+      #{printtimes,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, #{briefintroduction,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zc.book.pojo.Book" >
+    insert into book
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bookid != null" >
+        bookId,
+      </if>
+      <if test="bookname != null" >
+        bookName,
+      </if>
+      <if test="bookcategory != null" >
+        bookCategory,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="publishinghouse != null" >
+        publishingHouse,
+      </if>
+      <if test="printtimes != null" >
+        printTimes,
+      </if>
+      <if test="createdate != null" >
+        createDate,
+      </if>
+      <if test="briefintroduction != null" >
+        briefIntroduction,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bookid != null" >
+        #{bookid,jdbcType=INTEGER},
+      </if>
+      <if test="bookname != null" >
+        #{bookname,jdbcType=VARCHAR},
+      </if>
+      <if test="bookcategory != null" >
+        #{bookcategory,jdbcType=TINYINT},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="publishinghouse != null" >
+        #{publishinghouse,jdbcType=VARCHAR},
+      </if>
+      <if test="printtimes != null" >
+        #{printtimes,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="briefintroduction != null" >
+        #{briefintroduction,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zc.book.pojo.Book" >
+    update book
+    <set >
+      <if test="bookname != null" >
+        bookName = #{bookname,jdbcType=VARCHAR},
+      </if>
+      <if test="bookcategory != null" >
+        bookCategory = #{bookcategory,jdbcType=TINYINT},
+      </if>
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="publishinghouse != null" >
+        publishingHouse = #{publishinghouse,jdbcType=VARCHAR},
+      </if>
+      <if test="printtimes != null" >
+        printTimes = #{printtimes,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        createDate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="briefintroduction != null" >
+        briefIntroduction = #{briefintroduction,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and bookId = #{bookid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zc.book.pojo.Book" >
+    update book
+    set bookName = #{bookname,jdbcType=VARCHAR},
+      bookCategory = #{bookcategory,jdbcType=TINYINT},
+      author = #{author,jdbcType=VARCHAR},
+      publishingHouse = #{publishinghouse,jdbcType=VARCHAR},
+      printTimes = #{printtimes,jdbcType=VARCHAR},
+      createDate = #{createdate,jdbcType=TIMESTAMP},
+      briefIntroduction = #{briefintroduction,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+      and bookId = #{bookid,jdbcType=INTEGER}
+  </update>
+</mapper>

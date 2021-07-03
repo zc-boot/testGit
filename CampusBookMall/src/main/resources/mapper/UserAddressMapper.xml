@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zc.book.dao.UserAddressMapper" >
+  <resultMap id="BaseResultMap" type="com.zc.book.pojo.UserAddress" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="addressid" property="addressid" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="detailAddress" property="detailaddress" jdbcType="VARCHAR" />
+    <result column="isDefaultAddress" property="isdefaultaddress" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, addressid, userid, province, city, area, detailAddress, isDefaultAddress, createTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from user_address
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="queryMyAddress" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_address
+    where userid = #{userid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user_address
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zc.book.pojo.UserAddress" >
+    insert into user_address (id, addressid, userid, 
+      province, city, area, 
+      detailAddress, isDefaultAddress, createTime
+      )
+    values (#{id,jdbcType=INTEGER}, #{addressid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, 
+      #{detailaddress,jdbcType=VARCHAR}, #{isdefaultaddress,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zc.book.pojo.UserAddress" >
+    insert into user_address
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="addressid != null" >
+        addressid,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="detailaddress != null" >
+        detailAddress,
+      </if>
+      <if test="isdefaultaddress != null" >
+        isDefaultAddress,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="addressid != null" >
+        #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="detailaddress != null" >
+        #{detailaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefaultaddress != null" >
+        #{isdefaultaddress,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zc.book.pojo.UserAddress" >
+    update user_address
+    <set >
+      <if test="addressid != null" >
+        addressid = #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="detailaddress != null" >
+        detailAddress = #{detailaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefaultaddress != null" >
+        isDefaultAddress = #{isdefaultaddress,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="setDefaultAddress" parameterType="java.lang.String" >
+        update userAddress set isDefaultAddress=2 where addressId=#{addressId}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zc.book.pojo.UserAddress" >
+    update user_address
+    set addressid = #{addressid,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=INTEGER},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      detailAddress = #{detailaddress,jdbcType=VARCHAR},
+      isDefaultAddress = #{isdefaultaddress,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

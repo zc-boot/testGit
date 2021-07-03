@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zc.book.dao.BookCommentMapper" >
+  <resultMap id="BaseResultMap" type="com.zc.book.pojo.BookComment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bookId" property="bookid" jdbcType="INTEGER" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="commenrCreateDate" property="commenrcreatedate" jdbcType="TIMESTAMP" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="commentId" property="commentId" jdbcType="INTEGER" />
+    <result column="commentLevel" property="commentLevel"  />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zc.book.pojo.BookComment" extends="BaseResultMap" >
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bookId, commenrCreateDate, userId,comment,commentId,commentLevel
+  </sql>
+  <sql id="CommentUserList" >
+    bookcomment.id, bookid, commenrCreateDate, bookcomment.userid,comment,commentId,commentLevel,userName,sex
+  </sql>
+<!--  <sql id="Blob_Column_List" >-->
+<!--    comment-->
+<!--  </sql>-->
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from bookcomment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="queryCommentByBookId" resultType="com.zc.book.pojo.reponse.CommentAndUserRequest" parameterType="java.lang.String" >
+    select
+    <include refid="CommentUserList" />
+    from bookcomment left join `user` on bookcomment.userid=`user`.userid
+    where bookid = #{bookid}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bookcomment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zc.book.pojo.BookComment" >
+    insert into bookcomment (id, bookId,
+      commenrCreateDate, userId, comment
+      )
+    values (#{id,jdbcType=INTEGER}, #{bookid,jdbcType=INTEGER},
+      #{commenrcreatedate,jdbcType=TIMESTAMP}, #{userid,jdbcType=INTEGER}, #{comment,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zc.book.pojo.BookComment" >
+    insert into bookcomment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null " >
+        id,
+      </if>
+      <if test="bookid != null and bookid != ''" >
+        bookid,
+      </if>
+      <if test="commenrcreatedate != null" >
+        commenrCreateDate,
+      </if>
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="comment != null and comment != '' " >
+        comment,
+      </if>
+      <if test="commentId != null" >
+      commentId,
+      </if>
+      <if test="commentLevel != null" >
+        commentLevel
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="bookid != null and bookid != '' " >
+        #{bookid,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="commenrcreatedate != null" >
+        #{commenrcreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null and comment != '' " >
+        #{comment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="commentId != null" >
+        #{commentId},
+      </if>
+      <if test="commentLevel != null" >
+        #{commentLevel}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zc.book.pojo.BookComment" >
+    update bookcomment
+    <set >
+      <if test="bookid != null" >
+        bookId = #{bookid,jdbcType=INTEGER},
+      </if>
+      <if test="commenrcreatedate != null" >
+        commenrCreateDate = #{commenrcreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null" >
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="commentId != null" >
+        commentId=#{commentId},
+      </if>
+      <if test="commentLevel != null" >
+        commentLevel=#{commentLevel}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zc.book.pojo.BookComment" >
+    update bookcomment
+    set bookId = #{bookid,jdbcType=INTEGER},
+      commenrCreateDate = #{commenrcreatedate,jdbcType=TIMESTAMP},
+      userId = #{userid,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=LONGVARCHAR},
+      commentId=#{commentId},
+      commentLevel=#{commentLevel}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zc.book.pojo.BookComment" >
+    update bookcomment
+    set bookId = #{bookid,jdbcType=INTEGER},
+      commenrCreateDate = #{commenrcreatedate,jdbcType=TIMESTAMP},
+      userId = #{userid,jdbcType=INTEGER},
+    comment = #{comment,jdbcType=LONGVARCHAR},
+      commentId=#{commentId},
+      commentLevel=#{commentLevel}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

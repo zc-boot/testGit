@@ -1,0 +1,123 @@
+.book_address{
+    width: 100%;
+    height: auto;
+}
+.orderSettlement{
+    width: 55%;
+    height: 204px;
+    float: left;
+}
+.settlementTitle{
+    width: 100%;
+    height: 40px;
+}
+.settlementTitle li{
+    margin-right: 110px;
+    display: inline;
+    line-height: 40px;
+    float:left
+}
+.goodInfoUljieS{
+    height: 100px;
+    width: 100%;
+    background-color:  #e4e4e4;
+    border-bottom: #e4e4e4 2px solid;
+}
+.goodInfoUljieS li{
+    margin-right:90px;
+    display: inline;
+    line-height: 40px;
+    float:left
+}
+.bookImg{
+    height: 80px;
+    width: 80px;
+}
+.SHAddress{
+    width: 45%;
+    height: 200px;
+    float: right;
+}
+.addAddress{
+    margin-left: 40px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #0C0C0C;
+}
+.submit_text{
+    position: fixed;
+    top: 80%;
+    left: 50px;
+    width: 960px;
+    height: 70px;
+    margin: 15px auto;
+    background: #f1f5f8;
+}
+.jisong{
+    height: 60px;
+    width: 450px;
+    float: left;
+    padding-top: 10px;
+}
+.jisong_text{
+    width: 50px;
+    float: left;
+    height: 38px;
+    padding-top: 4px;
+    margin-left: 15px;
+    color: #000000;
+    font-family: MicrosoftYaHei;
+    line-height: 1.4;
+}
+.jisong_address{
+    font-family: MicrosoftYaHei;
+    font-size: 12px;
+    color: #656565;
+    letter-spacing: 0;
+    text-align: justify;
+    line-height: 24px;
+}
+.newbox{
+    width: 500px;
+    text-align: right;
+    color: #646464;
+    float: right;
+}
+.tip_tuan{
+    height: 70px;
+    position: relative;
+}
+
+.newbox_text{
+    height: 60px;
+    width: 260px;
+    float: left;
+    padding-top: 10px;
+}
+.btn_red{
+    height: 70px;
+    width: 140px;
+    line-height: 70px;
+    text-align: center;
+    color: #fff;
+    float: left;
+    background-color: #ff2832;
+    font-size: 16px;
+    margin-left: 20px;
+    border-radius: 0px;
+    font-weight: bold;
+}
+.btn_cancel{
+    height: 70px;
+    width: 50px;
+    line-height: 70px;
+    text-align: center;
+    color: #fff;
+    float: right;
+    background-color: #D4D4D4;
+    font-size: 16px;
+    border-radius: 0px;
+    font-weight: bold;
+    margin-right: 30px;
+}

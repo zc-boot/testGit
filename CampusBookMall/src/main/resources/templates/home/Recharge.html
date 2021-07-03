@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">账户金额</label>
+                <div class="layui-input-block">
+                    <input type="text" name="zhye"  id="zhye" autocomplete="off" class="layui-input" style="width: 150px" disabled="true">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">充值金额</label>
+                <div class="layui-input-block">
+                    <input type="text" name="recharge"  value="0" id="recharge" autocomplete="off" class="layui-input" style="width: 150px">
+                </div>
+            </div>
+            <button type="button" class="layui-btn layui-btn-normal" id="cz">充值</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','jquery','table','layer'], function() {
+        var $ = layui.jquery,
+            form = layui.form,
+            admin = layui.admin,
+            layer = layui.layer,
+            table = layui.table;
+        var userid=localStorage.getItem("userid");
+        $(function () {
+            zhye()
+        })
+        function zhye() {
+            $.ajax({
+                url: "/bookMall/user/zhye?userid="+userid,
+                success: function (res) {
+                    if (res.code==1){
+                        $("#zhye").val(res.data);
+                    }
+                }
+            })
+        }
+        $("#cz").click(function () {
+            var amount=$("#recharge").val();
+            if (isNaN(amount)){
+                layer.msg("输入不合法");
+                return;
+            }
+            if(amount.split(".").length == 2) {
+                if(value.split(".")[1].length > 2) {
+                    layer.msg('请最多输入两位小数');
+                    return;
+                }
+            }
+            if (amount<=0){
+                return layer.msg("请输入充值金额！")
+            }
+            var str={
+                "userid":userid,
+                "amount":amount
+            }
+            $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "/bookMall/user/recharge",
+                    data: JSON.stringify(str),
+                    success: function (res) {
+                        if (res.code==1){
+                            zhye()
+                            return   layer.msg(res.msg,{"icon":1});
+                        }
+                        layer.msg(res.msg)
+                    }
+                });
+        })
+    });
+</script>
+</body>
+</html>

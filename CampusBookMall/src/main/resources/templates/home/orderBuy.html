@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/css/bookSettlement.css" media="all">
+    <link rel="stylesheet" href="/static/css/city-picker/city-picker.css" media="all">
+    <script type="text/javascript" src="/static/css/city-picker/city-picker.data.js"></script>
+</head>
+<body>
+<div>
+<div class="layui-fluid book_address">
+    <div class="orderSettlement">
+            <ul class="settlementTitle">
+                <li>
+                    <span>商品名称</span>
+                </li>
+                <li>
+                    <span>单价</span>
+                </li>
+                <li>
+                    <span>数量</span>
+                </li>
+                <li>
+                    <span>总价</span>
+                </li>
+            </ul>
+            <p id="orderHide"></p>
+<!--            <ul class="goodInfoUl">-->
+<!--                <li>-->
+<!--                    <img src="http://localhost:8091/static/images/santi.jpg" class="bookImg">-->
+<!--                    <span class="bookname">三体</span>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <p class="price">56.0</p>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <span class="BookNum">1</span>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    <p class="totalPrice">56.0</p>-->
+<!--                </li>-->
+<!--            </ul>-->
+    </div>
+    <div class="SHAddress">
+        <div>
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-inline">
+                    <label class="layui-form-label">选择收货地址:</label>
+                    <div class="layui-input-block">
+                        <select  id="chooseUserAddress" lay-filter="chooseAddress">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <p class="addAddress" id="addAddress">新增收货地址:</p>
+            <div class="layui-inline">
+                <label class="layui-form-label width_auto text-r" style="margin-top:2px">省市县：</label>
+                <div class="layui-input-inline">
+                    <input type="text" autocomplete="on" class="layui-input roughAddress" id="city-picker" name="city-picker" readonly="readonly" data-toggle="city-picker" placeholder="请选择" style="width: 250px">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">详细地址：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="detailAddress"  id="detailAddress" placeholder="最少不能少于三个字" autocomplete="off" class="layui-input" style="width: 300px">
+                    </div>
+                    <div>
+                        <button type="button" class="layui-btn layui-btn-normal" id="saveAddress" style="margin-left: 80px;margin-top: 5px">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="submit_text">
+        <div class="jisong">
+            <div class="jisong_text">寄送至：</div>
+            <div class="jisong_address" id="jisong_address">
+                请选择地址
+            </div>
+            <span id="jsuser"></span>
+        </div>
+        <div class="newbox tip_tuan">
+            <div class="newbox_text">
+                共<span class="jiesuanNum">0</span>件商品
+                <span class="price">
+				<b>
+				实付：
+					<span style="color: #FF2832;">¥</span>
+					<span class="jiesuanPrice"></span>
+				</b>
+			</span>
+            </div>
+            <div class="btn_red" id="submitOrder"><a id="submit" href="javascript:void(0)" style="color: #fff">去支付</a></div>
+            <div class="btn_cancel" id="submitCancel"><a  href="javascript:void(0)" style="color: #fff">取消</a></div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+        , citypicker: '{/}/static/css/city-picker/city-picker'
+    }).use(['form','jquery','table','layer','citypicker'], function() {
+            var $ = layui.jquery,
+                form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                citypicker=layui.citypicker,
+                table = layui.table;
+            var userid=localStorage.getItem("userid");
+            var userName=localStorage.getItem("userName");
+            var phone=localStorage.getItem("phone");
+        var currentPicker = new citypicker("#city-picker", {
+            provincename:"provinceId",
+            cityname:"cityId",
+            districtname:"districtId"
+        });
+        function dshi() {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index);
+        }
+        function reAddress() {
+            $.ajax({
+                url: "/bookMall/userAddress/queryMyAddress?userid=" + userid,
+                async: false,
+                type: "get",
+                success: function (res) {
+                    if (res.code == 1) {
+                        var str = '';
+                        res.data.forEach(function (element) {
+                            str += '<option name="myAddress" value="' + element.province + ' ' + element.city + ' ' + element.area + ' ' + element.detailaddress + '">' + element.province + ' ' + element.city + ' ' + element.area + ' ' + element.detailaddress + '</option>'
+                        })
+                        $('#chooseUserAddress').html(str)
+                        form.render();
+                    }
+
+                }
+            })
+        }
+            $(function () {
+                reAddress();
+                $("#jsuser").html(userName+" "+phone.toString().substr(0, 3)+'****'+phone.toString().substr(7));
+                jiesuanTNum=$(".goodInfoUljieS").length;
+                var jiesuanTPrice=0;
+                console.log($(".JietotalPrice"))
+                console.log($(".JietotalPrice").text().split("¥")[2])
+                for(var i=1;i<=$(".JietotalPrice").length;i++){
+                    console.log($(".JietotalPrice").text())
+                    jiesuanTPrice+=Number($(".JietotalPrice").text().split("¥")[i])
+                    console.log(jiesuanTPrice)
+                }
+                console.log(jiesuanTPrice)
+                $(".jiesuanNum").text(jiesuanTNum);
+                $(".jiesuanPrice").text(jiesuanTPrice)
+
+            })
+            $("#saveAddress").click(function () {
+                var roughAddress=$(".roughAddress").val();
+                var detailAddress=$("#detailAddress").val();
+                var addressArr=roughAddress.split("/");
+                var provice=addressArr[0]
+                var city=addressArr[1]
+                var area=addressArr[2]
+                console.log(roughAddress+detailAddress);
+                console.log(provice);
+                var str={
+                    "userid":userid,
+                    "province":provice,
+                    "city":city,
+                    "area":area,
+                    "detailaddress":detailAddress
+                }
+                $.ajax({
+                    url:"/bookMall/userAddress/addUserAddress",
+                    type:"post",
+                    contentType:"application/json",
+                    data:JSON.stringify(str),
+                    success:function (res) {
+                        if(res.code ==1){
+                            layer.msg("保存成功");
+                            reAddress();
+                            form.render();
+                        }
+                        layer.close(index)
+                    }
+                })
+            })
+        $("#submitCancel").click(function () {
+            layer.confirm( '确定取消？',{
+                    icon: 3,
+                    btn:['确定','取消']
+                },function(index){
+                layer.msg("订单取消！",{"icon":1});
+                window.setTimeout(dshi,1000);
+
+            }
+            ,function (index) {
+                layer.close(index);
+            }
+            );
+        })
+        $("#submitOrder").click(function () {
+            layer.confirm( '确定支付？',{
+                    icon: 3,
+                    btn:['确定','取消']
+                },function(index){
+                    console.log(Number(1.0234));
+                    var shopCartId='';
+                    for(var i=0;i<$(".goodInfoUljieS").length;i++){
+                        if (i==$(".goodInfoUljieS").length-1){
+                            shopCartId+=$($(".goodInfoUljieS")[i]).attr("value")
+                        }else {
+                            shopCartId += $($(".goodInfoUljieS")[i]).attr("value") + ","
+                        }
+                    }
+                    var str={
+                        "userid":userid,
+                        "shopCartId":shopCartId,
+                        "amount":Number($(".jiesuanPrice").text()),
+                        "num":Number($(".jiesuanNum").text())
+                    }
+                    $.ajax({
+                        url:"/bookMall/order/insertOrder",
+                        type:"post",
+                        contentType:"application/json",
+                        data:JSON.stringify(str),
+                        success: function (res) {
+                            if (res.code==1){
+                                layer.msg(res.msg,{"icon":1,time: 2000})
+
+                            }else {
+                                layer.msg(res.msg,{"icon":1,time: 2000})
+                            }
+                            window.setTimeout(dshi,2000);
+                            layer.close(index);
+                        }
+                    })
+                }
+                ,function (index) {
+                    layer.close(index);
+                }
+            );
+        })
+        // console.log($("#chooseUserAddress"))
+        // $("#chooseUserAddress").bind('change',function () {
+        //     console.log("ssd")
+        //     console.log($("#chooseUserAddress option:selected").val())
+        //     $("#jisong_address").text($("#chooseUserAddress option:selected").val());
+        // })
+        form.on('select(chooseAddress)',function (data) {
+            var val=data.value;
+            $("#jisong_address").text(val);
+            console.log(userName)
+            console.log(phone)
+            //userName+" "+phone.toString().substr(0, 3)+'****'+phone.toString().substr(7)
+            // console.log($("#jsuser").text())
+
+        })
+    });
+</script>
+</body>
+</html>

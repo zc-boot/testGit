@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/css/bookDetailInfo.css" media="all">
+</head>
+<body>
+<div class="bookDetail">
+    <div id="divimg">
+        <img src="http://localhost:8091/static/images/xiyouji.jpg" id="bookimg"/>
+    </div>
+    <div id="divbook">
+        <div class="info">
+            <div id="bookId" style="display: none"></div>
+            <p id="bookname" style="display: inline"></p>
+        </div>
+        <div class="info">
+            <label>内容简介:</label>
+            <p id="briefintroduction" style="display: inline"></p>
+        </div>
+        <div class="info">
+            <label>作者:</label>
+            <p id="author" style="display: inline"></p>
+        </div>
+        <div class="info">
+            <label>出版社:</label>
+            <p id="publishinghouse" style="display: inline"></p>
+        </div>
+        <div class="info">
+            <label>出版时间:</label>
+            <p id="publishdate" style="display: inline"></p>
+        </div>
+        <div class="addCart">
+            <button type="button" class="layui-btn layui-btn-normal">加入购物车</button>
+        </div>
+    </div>
+    <div id="comment_div">
+        <div>累计评论(<span class="num" style="color: red">0</span>条)</div>
+        <div><span class="num" style="color: red">0</span>个书友正在讨论这本书</div>
+    </div>
+    <hr class="layui-border-orange">
+    <div class="AllcommentInfo">
+        <p id="commentHide"></p>
+<!--        <div>-->
+<!--            <p class="userName" style="color: #0C0C0C;font-size:16px ">admin<span class="commentTime">&nbsp;&nbsp;2017-12-14 17:58:31</span>-->
+<!--                <i class="layui-icon layui-icon-male" style="color: blue"></i><i class="layui-icon layui-icon-female" style="color: red"></i>-->
+<!--            </p>-->
+<!--            <p class="commentContent">大师的理念和受用。阿米巴经营理念就是鼓励全体员工参与经营，从而达到凝聚全体员工力量，提高员工工作积极性的目的。阿米巴的具体操作写的比较详细，还是很有意思的。值得管理者慎入的学习。非常好，人人都是经营的主角，信任是最低的管理成本</p>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <p class="userName" style="color: #0C0C0C;font-size:16px ">admin<span class="commentTime">&nbsp;&nbsp;2017-12-14 17:58:31</span>-->
+<!--                {{#  if(sex == "男" || sex == null){ }}-->
+<!--                <i class="layui-icon layui-icon-male" style="color: blue"></i>-->
+<!--                {{#  } else { }}-->
+<!--                <i class="layui-icon layui-icon-female" style="color: red"></i>-->
+<!--            </p>-->
+<!--            <p class="commentContent">大师的理念和受用。阿米巴经营理念就是鼓励全体员工参与经营，从而达到凝聚全体员工力量，提高员工工作积极性的目的。阿米巴的具体操作写的比较详细，还是很有意思的。值得管理者慎入的学习。非常好，人人都是经营的主角，信任是最低的管理成本</p>-->
+<!--        </div>-->
+        <div id="demo7"></div>
+    </div>
+    <div id="public_comment">
+        <div id="comment_text" class="layui-inline">发表评论</div>
+        <div id="comment"></div>
+        <div class="layui-form-item layui-form-text">
+<!--            <label class="layui-form-label"></label>-->
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" id="commentText" style="width:1000px;height: 300px;"></textarea>
+            </div>
+        </div>
+        <button type="button" class="layui-btn layui-btn-normal layui-btn-radius" id="public_comment_button">发表评论</button>
+    </div>
+</div>
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).use(['form','jquery','table','rate','laypage'], function() {
+        var $ = layui.jquery,
+            form = layui.form,
+            admin = layui.admin,
+            rate = layui.rate,
+            laypage = layui.laypage,
+            table = layui.table;
+        var userid=localStorage.getItem('userid');
+        var commmentLevel=0;
+        rate.render({
+            elem: '#comment'
+            ,value:0
+            ,text:true
+            ,setText: function(value){
+                commmentLevel=value;
+                var arrs = {
+                    '1': '极差'
+                    ,'2': '差'
+                    ,'3': '中等'
+                    ,'4': '好'
+                };
+                this.span.text(arrs[value] || ( value + "星"));
+            }
+        })
+        var page=1; //设置首页页码
+        var limit=10;  //设置一页显示的条数
+        var total;
+        $(function(){
+            loadData()
+            getPage()
+        });
+        function loadData() {
+            var bookId=$("#bookId").text();
+            console.log(bookId)
+            console.log(page)
+            var str={
+                "bookid":bookId,
+                "pageNum":page,
+                "pageSize":limit
+            }
+            $.ajax({
+                url:"/bookMall/bookComment/queryBookComment",
+                method:"post",
+                async:false,
+                dataType: "json",
+                contentType:"application/json",
+                data:JSON.stringify(str),
+                success:function (req) {
+                    if(req.code ==1){
+                        total=req.data.count;
+                        $('.num').text(total)
+                        console.log(req.data.data)
+                        req.data.data.forEach(function (element) {
+                            var userName=element.userName;
+                            var sex=element.sex;
+                            var comment=element.comment;
+                            var commentTime=element.commenrcreatedate;
+                            $("#commentHide").append('<div>\n' +
+                                '            <p class="userName" style="color: #0C0C0C;font-size:16px ">'+userName+'<span class="commentTime">&nbsp;&nbsp;'+commentTime+'</span>\n' +
+                                // '                {{#  }if('+sex+' == "男" || '+sex+' == null){ }}\n' +
+                                // '                <i class="layui-icon layui-icon-male" style="color: blue"></i>\n' +
+                                // '                {{#  } else { }}\n' +
+                                // '                <i class="layui-icon layui-icon-female" style="color: red"></i>\n' +
+                                '            </p>\n' +
+                                '            <p class="commentContent">'+comment+'</p>\n' +
+                                '        </div>')
+                            });
+                        }
+                    }
+            });
+        }
+        function getPage(){
+            console.log(total)
+            console.log(limit)
+            laypage.render({
+                elem: 'demo7' //注意，这里的 test1 是 ID，不用加 # 号
+                ,count: total, //数据总数，从服务端得到
+                limit:limit,   //每页条数设置
+                jump: function(obj, first){
+                    //obj包含了当前分页的所有参数，比如：
+                    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                    console.log(obj.limit); //得到每页显示的条数
+                    page=obj.curr;  //改变当前页码
+                    limit=obj.limit;
+                    //首次不执行
+                    if(!first){
+                        loadData()  //加载数据
+                    }
+                }
+            });
+        }
+        $(".addCart").click(function () {
+            var userId =localStorage.getItem("userid");
+            var usertype=localStorage.getItem("usertype");
+            if (usertype==1){
+                layer.msg("要注册才能购买商品！")
+                return;
+            }
+            var bookId=$("#bookId").text();
+            var data={
+                "userid":userId,
+                "bookid":bookId,
+                "num":1
+            }
+            $.ajax({
+                url:"/bookMall/shopCart/insertShopCart",
+                method:"post",
+                dataType: "json",
+                contentType:"application/json",
+                data:JSON.stringify(data),
+                success:function (req) {
+                    if(req.code ==1){
+                        layer.msg("加入购物车成功！",{icon:1,time:500})
+                    }
+                }
+            })
+        })
+        $("#public_comment_button").click(function () {
+            var comment=$("#commentText").val();
+            var bookid=$("#bookId").text();
+            var str={
+                "commentLevel":commmentLevel,
+                "comment":comment,
+                "userid":userid,
+                "bookid":bookid
+            }
+            $.ajax({
+                url:"/bookMall/bookComment/addBookComment",
+                method:"post",
+                dataType: "json",
+                contentType:"application/json",
+                data:JSON.stringify(str),
+                success:function (req) {
+                    if(req.code ==1){
+                        layer.msg("发表成功！",{icon:1,time:500})
+                        location.reload();
+                    }
+                }
+            })
+        })
+    });
+</script>
+</body>
+</html>

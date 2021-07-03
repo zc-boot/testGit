@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    username: root
+    driver-class-name: com.mysql.jdbc.Driver
+    password: zc123456
+    url: jdbc:mysql://127.0.0.1:3306/campusbook?useUnicode=true&characterEncoding=UTF-8&relaxAutoCommit=true&zeroDateTimeBehavior=convertToNull
+  mvc:
+    static-path-pattern: /static/**
+  thymeleaf:
+      content-type: text/html
+      cache: false
+      mode: LEGACYHTML5
+  devtools:
+      restart:
+        enabled: true
+
+mybatis:
+  #mapper.xml所在位置
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  config: classpath:logback-spring.xml
+
+server:
+  tomcat:
+    uri-encoding: UTF-8

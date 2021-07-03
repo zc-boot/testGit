@@ -1,0 +1,112 @@
+.shopping_title{
+    list-style: none;
+}
+.shopping_title li{
+    font-size: 15px;
+    font-weight:600 ;
+    margin-right: 120px;
+    display: inline;
+    line-height: 40px;
+    float:left
+}
+.goodInfoDiv{
+    margin-top: 50px;
+}
+.goodInfoUl{
+    height: 100px;
+    width: 100%;
+    background-color:  #e4e4e4;
+    border-bottom: #e4e4e4 2px solid;
+}
+.goodInfoUl li{
+    margin-top: 10px;
+    margin-right: 110px;
+    display: inline;
+    line-height: 40px;
+    float:left
+}
+.bookImg{
+    height: 80px;
+    width: 80px;
+}
+.remove{
+    display: block;
+    float: left;
+    height: 28px;
+    width: 28px;
+    text-align: center;
+    line-height: 28px;
+    background-color: #e6f9ff;
+}
+.addBook{
+    display: block;
+    float: left;
+    height: 28px;
+    width: 28px;
+    line-height: 28px;
+    text-align: center;
+    background-color: #e6f9ff;
+}
+
+.bookname{
+    margin-left: 30px;
+}
+.checkbook {
+/*    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    padding-left: 1px;*/
+}
+.checkbook input{
+    margin-top: 35px;
+}
+.shopNum{
+    width: 36px;
+    height: 28px;
+    line-height: 28px\9;
+    float: left;
+    padding: 0;
+    text-align: center;
+    border: 1px solid #dcdcdc;
+    border-width: 0 1px;
+    background-color: #fff;
+    font-weight: bold;
+}
+.shopNumLi{
+    margin-left: 10px;
+}
+.delbook{
+    margin-left: 25px;
+}
+.bookAmount a:link, a:visited {
+    text-decoration: none;
+    color: #323232;
+}
+.settlement{
+    list-style: none;
+    margin-top: 30px;
+    margin-bottom: 100px;
+    border-color: #969696 ;
+    border: #969696 solid 1px;
+}
+.settlement li{
+    font-size: 15px;
+    font-weight:600 ;
+    margin-right: 190px;
+    display: inline;
+    line-height: 40px;
+    float:left;
+}
+#bookNum{
+    color: red;
+}
+#payprice{
+    font-size: 18px;
+    color: red;
+}
+.emptyCartP {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    text-align: center;
+}

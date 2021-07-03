@@ -1,0 +1,144 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>注册 - layuiAdmin</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/login.css" media="all">
+</head>
+<body>
+
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <p class="layui-font-blue">账号注册</p>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-zh"></label>
+                <input type="text" name="userName" id="LAY-user-login-zh"   placeholder="账号" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone" for="LAY-user-login-cellphone"></label>
+                <input type="text" name="phone" id="LAY-user-login-cellphone" lay-verify="phone" placeholder="手机" class="layui-input">
+            </div>
+<!--            <div class="layui-form-item">-->
+<!--                <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone" for="LAY-user-login-cellphone"></label>-->
+<!--                <input type="text" name="sex" id="LAY-user-login-sex" lay-verify="phone" placeholder="性别" class="layui-input">-->
+<!--            </div>-->
+            <form class="layui-form layui-form-pane" action="" lay-filter="example">
+            <div class="layui-form-item" pane="" >
+                <label class="layui-form-label" style="color: #afb9c3">性别</label>
+                <div class="layui-input-block" style="margin-right: 20px">
+                    <input type="radio" name="sex" value="男" title="男" checked=""style="color: #afb9c3">
+                    <input type="radio" name="sex" value="女" title="女" style="color: #afb9c3">
+                </div>
+            </div>
+            </form>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+                <input type="password" name="password" id="LAY-user-login-password" lay-verify="pass" placeholder="密码" class="layui-input" >
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-repass"></label>
+                <input type="password" name="repass" id="LAY-user-login-repass" lay-verify="required" placeholder="确认密码" class="layui-input">
+            </div>
+            <div class="layui-form" lay-filter="xx">
+                <input type="checkbox" name="agreement" lay-skin="primary" title="同意用户协议" checked>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-reg-submit" id="registered">注 册</button>
+            </div>
+            <div class="layui-trans layui-form-item layadmin-user-login-other">
+                <label>社交账号注册</label>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
+                <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+
+                <a href="login" class="layadmin-user-jump-change layadmin-link layui-hide-xs">已有账号，去登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script type="text/javascript" th:inline="none">
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    // }).extend({
+    //     index: 'lib/index' //主入口模块
+    }).use(['form','jquery'], function(){
+        var $ = layui.jquery
+            ,setter = layui.setter
+            ,form = layui.form
+            ,router = layui.router();
+        form.render();
+        $("#LAY-user-login-password").blur(function () {
+            var  password=$("#LAY-user-login-password").val()
+            // console.log(password.length)
+            var re_pw=/^.{6,12}$/
+            if(!re_pw.test(password)&& password.length<6){
+                return layer.msg("密码至少为六位");
+            }
+        })
+        $("#registered").click(function () {
+            form.on('submit(LAY-user-reg-submit)', function(obj){
+                console.log("sda")
+                var field = obj.field;
+                //确认密码
+                //是否同意用户协议
+                if(!field.agreement){
+                    return layer.msg('你必须同意用户协议才能注册');
+                }
+                //请求接口
+                return false;
+            });
+            var username=$("#LAY-user-login-zh").val();
+            console.log(username)
+            var phone=$("#LAY-user-login-cellphone").val();
+            var data = form.val('example');
+            var sex=Object.values(data)[0]
+            console.log(sex)
+            var password=$("#LAY-user-login-password").val()
+            var repass=$("#LAY-user-login-repass").val()
+            if (password!=repass){
+                return  layer.msg("两次输入密码不一致");
+            }
+            var xx = form.val('xx');
+            console.log(xx)
+            var str={
+                "username":username,
+                "phone":phone,
+                "sex":sex,
+                "password":password
+            }
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                async: false,
+                contentType: "application/json",
+                url: "/bookMall/user/register",
+                data: JSON.stringify(str),
+                success: function (res) {
+                    if (res.code==1){
+                        layer.msg('注册成功', {offset: '15px',icon: 1,time: 1000})
+                        location.hash = '/bookMall/user/login';
+                        return;
+                    }
+                    layer.msg(res.msg);
+                }
+            });
+        })
+        //提交
+
+    });
+</script>
+</body>
+</html>

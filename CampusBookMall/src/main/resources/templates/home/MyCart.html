@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/css/myCart.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <ul class="shopping_title" id="j_carttitle">
+        <li class="f1"><input type="checkbox" name="allGoods" class="allGoods" lay-skin="primary" title="写作" >&nbsp;&nbsp;全选</li>
+        <li class="f2">商品信息</li>
+        <li class="f3">单价（元）</li>
+        <li class="f4">数量</li>
+        <li class="f4">金额（元）</li>
+        <li class="f5">操作</li>
+    </ul>
+    <div class="goodInfoDiv">
+        <p id="appendhide"></p>
+<!--        <ul class="goodInfoUl">-->
+<!--        <li class="checkbook"><input type="checkbox" name="like1[write]" lay-skin="primary"  ></li>-->
+<!--        <li>-->
+<!--            <img src="http://localhost:8091/static/images/santi.jpg" class="bookImg">-->
+<!--            <span class="bookname">三体</span>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <p class="price">56.0</p>-->
+<!--        </li>-->
+<!--        <li class="shopNumLi">-->
+<!--                <span class="bookAmount" data-value="1">-->
+<!--                    <a dd_name="减少数量" class="remove" href="javascript:void(0)">-</a>-->
+<!--                    <input data-value="1" value="1" type="text" class="shopNum">-->
+<!--                    <a dd_name="增加数量" class="addBook" href="javascript:void(0)">+</a></span>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <p class="payPrice">57.0</p>-->
+<!--        </li>-->
+<!--        <li class="operabook">-->
+<!--                <span>-->
+<!--                    <a href="#"></a>-->
+<!--                </span>-->
+<!--            <span>-->
+<!--                    <p class="delbook">删除</p>-->
+<!--                </span>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--        <ul class="goodInfoUl">-->
+<!--            <li class="checkbook"><input type="checkbox" name="like1[write]" lay-skin="primary"  ></li>-->
+<!--            <li>-->
+<!--                <img src="http://localhost:8091/static/images/santi.jpg" class="bookImg">-->
+<!--                <span class="bookname">三体</span>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <p class="price">56.0</p>-->
+<!--            </li>-->
+<!--            <li class="shopNumLi">-->
+<!--                <span class="bookAmount" data-value="1">-->
+<!--                    <a dd_name="减少数量" class="remove" href="javascript:void(0)">-</a>-->
+<!--                    <input data-value="1" value="1" type="text" class="shopNum">-->
+<!--                    <a dd_name="增加数量" class="addBook" href="javascript:void(0)">+</a>
+                    </span>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <p class="payPrice">57.0</p>-->
+<!--            </li>-->
+<!--            <li class="operabook">-->
+<!--                <span>-->
+<!--                    <a href="#"></a>-->
+<!--                </span>-->
+<!--                <span>-->
+<!--                    <p class="delbook">删除</p>-->
+<!--                </span>-->
+<!--            </li>-->
+<!--        </ul>-->
+        <ul class="settlement">
+            <li class="s1"><input type="checkbox" name="allGoods" class="allGoods" lay-skin="primary" title="写作" >&nbsp;&nbsp;全选</li>
+            <li class="checkNum">已选择<span id="bookNum">0</span>件商品</li>
+            <li>总计<span id="payprice">¥0.00</span></li>
+            <li>
+                <button type="button" class="layui-btn layui-btn-warm layui-btn-radius" id="bookSettlement">结算</button>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','jquery','table','layer'], function() {
+            var $ = layui.jquery,
+                form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                table = layui.table;
+        var userid=localStorage.getItem("userid");
+        $(function () {
+            var str={
+                "userid":userid
+            }
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                async:false,
+                contentType:"application/json",
+                url: "/bookMall/shopCart/queryMyShopCart" ,
+                data:JSON.stringify(str),
+                success: function (res) {
+                    console.log(res)
+                    if(res.code==1){
+                        if (res.data==null){
+                            $("#appendhide").append('<div class="emptyCart">\n' +
+                                '            <p class="emptyCartP">您还没有添加商品！</p>\n' +
+                                '        </div>')
+                        }
+                        else {
+                            console.log(res.data)
+                            res.data.forEach(function (element) {
+                                var shopCartId=element.shopcartid;
+                                console.log(shopCartId);
+                                var id = element.id;
+                                var payPrice = element.amount;
+                                var bookImg = element.book.bookImg;
+                                var bookname = element.book.bookname;
+                                var price = element.book.price;
+                                $("#appendhide").append('<ul class="goodInfoUl" value="'+shopCartId+'">\n' +
+                                    '        <li class=\"checkbook checkbook' + id + '\" value=\"'+shopCartId+'\"><input type="checkbox" name="checkB' +
+                                    'ook" lay-skin="primary" ></li>\n' +
+                                    '        <li class="bookImgAndName">\n' +
+                                    '            <img src=' + bookImg + ' class="bookImg">\n' +
+                                    '            <span class="bookname">' + bookname + '</span>\n' +
+                                    '        </li>\n' +
+                                    '        <li class="classPrice">\n' +
+                                    '            <p class="price price' + id + '\">¥' + price + '</p>\n' +
+                                    '        </li>\n' +
+                                    '        <li class="shopNumLi">\n' +
+                                    '                <span class="bookAmount" data-value="1">\n' +
+                                    '                    <a dd_name="减少数量" class="remove remove' + id + '\" href="javascript:void(0)">-</a>\n' +
+                                    '                    <input data-value="1" value="1" type="text" class="shopNum shopNum' + id + '\">\n' +
+                                    '                    <a dd_name="增加数量" class="addBook addBook' + id + '\" href="javascript:void(0)">+</a></span>\n' +
+                                    '        </li>\n' +
+                                    '        <li class="classPayPrice">\n' +
+                                    '            <p class="payPrice payPrice' + id + '\">¥' + payPrice + '</p>\n' +
+                                    '        </li>\n' +
+                                    '        <li id="operabook">\n' +
+                                    '                <span>\n' +
+                                    '                    <a href="#"></a>\n' +
+                                    '                </span>\n' +
+                                    '            <span>\n' +
+                                    '                    <p class="delbook delbook' + id + '\">删除</p>\n' +
+                                    '                </span>\n' +
+                                    '        </li>\n' +
+                                    '    </ul>')
+                                $(".remove" + id).click(function () {
+                                    var num = $(".shopNum" + id).val();
+                                    if (num == 1) {
+                                        layer.msg("购买数量已经为1")
+                                        return;
+                                    }
+                                    var num1 = Number(num) - 1;
+                                    console.log($(".price" + id).text().split("¥")[1])
+                                    var payPrice = num1 * Number($(".price" + id).text().split("¥")[1])
+                                    $(".shopNum" + id).val(num1);
+                                    $(".payPrice" + id).text("¥" + payPrice);
+                                })
+                                $(".addBook" + id).click(function () {
+                                    var num = $(".shopNum" + id).val();
+                                    var num1 = Number(num) + 1;
+                                    console.log($(".price" + id).text().split("¥")[1])
+                                    var payPrice = num1 * Number($(".price" + id).text().split("¥")[1])
+                                    $(".payPrice" + id).text("¥" + payPrice);
+                                    $(".shopNum" + id).val(num1);
+                                })
+                                $(".delbook" + id).click(function () {
+                                    shopCartId=$(this).parent().parent().parent().attr("value")
+                                    console.log(shopCartId)
+                                    $.ajax({
+                                        type: "get",
+                                        async: false,
+                                        url: "/bookMall/shopCart/deleteMyShopCart?shopCartId="+shopCartId,
+                                        success: function (res) {
+                                            if (res.code==1){
+                                                return layer.msg("删除成功")
+                                            }
+                                        }
+                                    });
+
+                                })
+                            });
+                        }
+                        return;
+                    }
+                    layer.msg(data.msg);}
+            });
+            $(function () {
+                $("input[name=\"checkBook\"]").bind('input propertychange', function() {
+                    // bookNum = $("input[name='checkBook']:checked").length
+                    var payPrice=0;
+                    var bookNum=0;
+                    var thisPayPrice=0;
+                    $("input[name='checkBook']:checked").each(function (index, item) {
+                        bookNum+=Number($(this).parent().nextAll(".shopNumLi").children(".bookAmount").children(".shopNum").val());
+                        console.log(bookNum)
+                        payPrice+=Number($(this).parent().nextAll(".classPayPrice").children("p.payPrice").text().split("¥")[1])
+                    });
+                    $("#payprice").text('¥'+payPrice)
+                    $("#bookNum").text(bookNum);
+                });
+            })
+        })
+        $(function () {
+            $("input[name=\"allGoods\"]").bind('input propertychange', function() {
+                if($("input[name=\"allGoods\"]").is(':checked')) {
+                    $("input[name=\"checkBook\"]").prop("checked",true);
+                    // $("input[name=\"allGoods\"]").prop("checked",true);
+                    var bookNum = 0;
+                    var payPrice = 0;
+                    $("input[name='checkBook']:checked").each(function (index, item) {
+                        bookNum = $("input[name='checkBook']:checked").length
+                        payPrice += Number($(this).parent().nextAll(".classPayPrice").children("p.payPrice").text().split("¥")[1])
+                    });
+                    $("#payprice").text('¥' + payPrice)
+                    $("#bookNum").text(bookNum);
+                }else{
+                    $("input[name=\"checkBook\"]").prop("checked",false);
+                    // $("input[name=\"allGoods\"]").prop("checked",false);
+                    $("#payprice").text('¥0.00');
+                    $("#bookNum").text(0);
+                }
+            });
+        })
+        $("#bookSettlement").click(function () {
+            if ($("input[name='checkBook']:checked").length==0){
+                layer.msg('您还没有选择商品！')
+                return;
+            }
+            layer.open({
+                type:2,
+                title:'结算',
+                content: 'orderBuy',
+                maxmin: true
+                ,area: ['100%', '100%']
+                ,btn: ['确定', '取消']
+                ,success:function (layero, index) {
+                    let iframeWindow = window['layui-layer-iframe'+ index];
+                    let doc = $(iframeWindow.document);
+                    $("input[name='checkBook']:checked").each(function (index, item) {
+                        bookTotalNum = $("input[name='checkBook']:checked").length
+                        shopCartId=$(this).parent().attr("value");
+                        console.log(shopCartId)
+                        console.log($(this).parent().nextAll(".classPayPrice").children("p.payPrice").text().split("¥")[1])
+                        bookName=$(this).parent().nextAll(".bookImgAndName").children(".bookname").text()
+                        bookImgs=$(this).parent().nextAll(".bookImgAndName").children(".bookImg")[0].src;
+                        console.log(bookImgs)
+                        console.log(bookName)
+                        bookPrice=$(this).parent().nextAll(".classPrice").children(".price").text().split("¥")[1]
+                        console.log(bookPrice)
+                        bookNum=$(this).parent().nextAll(".shopNumLi").children(".bookAmount").children(".shopNum").val()
+                        console.log(bookNum)
+                        bookPayPrice=$(this).parent().nextAll(".classPayPrice").children(".payPrice").text().split("¥")[1]
+                        console.log(bookPayPrice)
+                        console.log(doc.find("#orderHide"))
+                        $(doc.find("#orderHide")).append('<ul class="goodInfoUljieS" value="'+shopCartId+'">\n' +
+                            '                    <li>\n' +
+                            '                        <img src="'+bookImgs+'" class="bookImg">\n' +
+                            '                        <span class="Jiebookname">'+bookName+'</span>\n' +
+                            '                    </li>\n' +
+                            '                    <li>\n' +
+                            '                        <p class="Jieprice">¥'+bookPrice+'</p>\n' +
+                            '                    </li>\n' +
+                            '                    <li>\n' +
+                            '                        <span class="JieookNum">'+bookNum+'</span>\n' +
+                            '                    </li>\n' +
+                            '                    <li class="JietotalPriceClass">\n' +
+                            '                        <p class="JietotalPrice">¥'+bookPayPrice+'</p>\n' +
+                            '                    </li>\n' +
+                            '                </ul>')
+                    });
+                    // doc.find("#bookId").text(element.bookId);
+                    // doc.find("#bookname").text(element.bookname);
+                    // doc.find("#briefintroduction").text(element.briefintroduction);
+                    // doc.find("#author").text(element.author);
+                    // doc.find("#publishinghouse").text(element.publishinghouse);
+                    // doc.find("#publishdate").text(element.publishdate);
+                    // doc.find("#bookimg").attr("src",element.bookImg);
+                },
+                yes: function(index, layero){
+                    let iframeWindow = window['layui-layer-iframe'+ index];
+                    let doc = $(iframeWindow.document);
+                    layer.close(index);
+                },cancel: function (layer_window) {
+                    // 关闭弹出框页面
+                    layer.close(layer_window);
+                }
+            })
+            // var shopCartIdArr = new Array();
+            // $("input[name='checkBook']:checked").each(function (index, item) {
+            //     console.log(Number($(this).parent().nextAll(".classPayPrice").children("p.payPrice").text().split("¥")[1]))
+            //     console.log($(this).parent().attr("value"))
+            //     shopCartIdArr.push('\"'+$(this).parent().attr("value")+'\"')
+            // });
+            // var shopCartIdStr="["+String(shopCartIdArr)+"]";
+            // str={
+            //     "userid":userid,
+            //     "amount":Number($("#payprice").text().split("¥")[1]),
+            //     "shopCartId":shopCartIdStr
+            // }
+            // $.ajax({
+            //     type: "POST",
+            //     dataType: "json",
+            //     async: false,
+            //     contentType: "application/json",
+            //     url: "/bookMall/order/insertOrder",
+            //     data: JSON.stringify(str),
+            //     success: function (res) {
+            //         if (res.code==1){
+            //
+            //         }
+            //     }
+            // });
+        })
+    });
+</script>
+</body>
+</html>

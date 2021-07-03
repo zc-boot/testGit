@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zc.book.dao.ShopCartMapper" >
+  <resultMap id="BaseResultMap" type="com.zc.book.pojo.ShopCart" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="shopCartId" property="shopcartid" jdbcType="VARCHAR" />
+    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="bookId" property="bookid" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+  </resultMap>
+  <resultMap id="ShopCartBookInfoMap" extends="BaseResultMap" type="com.zc.book.pojo.query.ShopCartBookInfo">
+        <association property="book" javaType="com.zc.book.pojo.Book">
+          <id column="id" property="id" jdbcType="INTEGER" />
+          <id column="bookId" property="bookId" jdbcType="INTEGER" />
+          <result column="bookName" property="bookname" jdbcType="VARCHAR" />
+          <result column="bookImg" property="bookImg" jdbcType="VARCHAR" />
+          <result column="bookCategory" property="bookcategory" jdbcType="TINYINT" />
+          <result column="author" property="author" jdbcType="VARCHAR" />
+          <result column="publishingHouse" property="publishinghouse" jdbcType="VARCHAR" />
+          <result column="printTimes" property="printtimes" jdbcType="VARCHAR" />
+          <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
+          <result column="briefIntroduction" property="briefintroduction" jdbcType="VARCHAR" />
+          <result column="price" property="price" jdbcType="DECIMAL" />
+          <result column="stock" property="stock" />
+          <result column="bstate" property="bstate" />
+          <result column="publishdate" property="publishdate" />
+        </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, shopCartId, createDate, userId, bookId, num, amount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from shopcart
+    where shopcartid = #{shopCartId}
+  </select>
+  <select id="queryMyShopCart" resultMap="ShopCartBookInfoMap">
+    select
+        shopcart.*,book.*
+    from shopcart left join book on shopcart.bookid=book.bookid
+    where userid = #{userId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from shopcart
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteMyShopCarts" parameterType="java.lang.String">
+    delete from shopcart
+    where shopcartid in
+    <foreach collection="array" item="shopcartid" index="i" open="("
+             separator="," close=")">
+      #{shopcartid}
+    </foreach>
+  </delete>
+  <delete id="deleteMyShopCart" parameterType="java.lang.String" >
+    delete from shopcart
+    where shopcartid = #{shopcartid}
+  </delete>
+  <insert id="insert" parameterType="com.zc.book.pojo.ShopCart" >
+    insert into shopcart (id, shopCartId, createDate, 
+     userId, bookId,
+      num, amount)
+    values (#{id,jdbcType=INTEGER}, #{shopcartid,jdbcType=VARCHAR}, #{createdate,jdbcType=TIMESTAMP}, 
+       #{userid,jdbcType=INTEGER}, #{bookid,jdbcType=INTEGER},
+      #{num,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zc.book.pojo.ShopCart" >
+    insert into shopcart
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="shopcartid != null" >
+        shopCartId,
+      </if>
+      <if test="createdate != null" >
+        createDate,
+      </if>
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="bookid != null" >
+        bookId,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="shopcartid != null" >
+        #{shopcartid,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="bookid != null" >
+        #{bookid,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zc.book.pojo.ShopCart" >
+    update shopcart
+    <set >
+      <if test="shopcartid != null" >
+        shopCartId = #{shopcartid,jdbcType=VARCHAR},
+      </if>
+      <if test="createdate != null" >
+        createDate = #{createdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userid != null" >
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="bookid != null" >
+        bookId = #{bookid,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zc.book.pojo.ShopCart" >
+    update shopcart
+    set shopCartId = #{shopcartid,jdbcType=VARCHAR},
+      createDate = #{createdate,jdbcType=TIMESTAMP},
+      userId = #{userid,jdbcType=INTEGER},
+      bookId = #{bookid,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

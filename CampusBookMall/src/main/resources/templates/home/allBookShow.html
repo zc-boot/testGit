@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">书籍名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="bookName" id="bookName" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">作者</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="author" id="author" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">出版社</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="publishinghouse" id="publishinghouse" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">价格</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="price" id="price" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-forum-list" lay-submit lay-filter="LAY-app-forumlist-search" id="searchBook">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list"></table>
+            <script type="text/html" id="imgTpl">
+                <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+            </script>
+            <script type="text/html" id="table-forum-list">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></a>
+            </script>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space30" id="allGoods">
+        <p id="appendh"></p>
+    </div>
+    <div id="test1"></div>
+</div>
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).use(['form','jquery','table','layer','laypage'], function() {
+        var $ = layui.jquery,
+            form = layui.form,
+            admin = layui.admin,
+            laypage = layui.laypage,
+            layer = layui.layer,
+            table =layui.table;
+        // bookname = $
+        // author
+        // publishinghouse
+        // price
+        var page=1; //设置首页页码
+        var limit=10;  //设置一页显示的条数function showBook()
+        var total;
+        $(function(){
+            allbook()
+            getPage()
+        });
+        function allbook() {
+            var str = {
+                "pageNum": page,
+                "pageSize": limit
+            }
+            $.ajax({
+                url: "/bookMall/book/queryBookByType",
+                async:false,
+                method: "post",
+                contentType: "application/json",
+                data: JSON.stringify(str),
+                success: function (res) {
+                    if (res.code == 1) {
+                        total=res.data.total;
+                        console.log(total);
+                        console.log(res.data);
+                        $("#appendh").empty();
+                        res.data.list.forEach(function (element) {
+                            var bookname = element.bookname;
+                            var img = element.bookImg;
+                            console.log(bookname)
+                            console.log(img)
+                            var price = element.price;
+                            var bookid = element.bookId;
+
+                            $("#appendh").append('<div class="layui-col-md2 layui-col-sm4" style="margin-right: 50px" id="bookDetail' + bookid + '">\n' +
+                                '            <div class="cmdlist-container">\n' +
+                                '                <a href="javascript:;">\n' +
+                                '                    <img src=' + img + '>\n' +
+                                '                </a>\n' +
+                                '                <a href="javascript:;">\n' +
+                                '                    <div class="cmdlist-text">\n' +
+                                '                        <p class="info">' + bookname + '</p>\n' +
+                                '                        <div class="price">\n' +
+                                '                            <b style="color: red">¥' + price + '</b>\n' +
+                                '                            <p class="layui-inline" style="margin-left: 20px">\n' +
+                                '                                ¥\n' +
+                                '                                <del>130</del>\n' +
+                                '                            </p>\n' +
+                                '                        </div>\n' +
+                                '                    </div>\n' +
+                                '                </a>\n' +
+                                '            </div>\n' +
+                                '        </div>');
+                            $("#bookDetail" + bookid + "").click(function () {
+                                layer.open({
+                                    type: 2,
+                                    title: '图书详情',
+                                    content: 'bookDetailInfo',
+                                    maxmin: true
+                                    , area: ['100%', '100%']
+                                    , btn: ['确定', '取消']
+                                    , success: function (layero, index) {
+                                        let iframeWindow = window['layui-layer-iframe' + index];
+                                        console.log(iframeWindow)
+                                        let doc = $(iframeWindow.document);
+                                        console.log(doc);
+                                        console.log(element.bookname);
+                                        console.log(doc.find("#bookname").text())
+                                        doc.find("#bookId").text(element.bookId);
+                                        doc.find("#bookname").text(element.bookname);
+                                        doc.find("#briefintroduction").text(element.briefintroduction);
+                                        doc.find("#author").text(element.author);
+                                        doc.find("#publishinghouse").text(element.publishinghouse);
+                                        doc.find("#publishdate").text(element.publishdate);
+                                        doc.find("#bookimg").attr("src", element.bookImg);
+                                    },
+                                    yes: function (index, layero) {
+                                        let iframeWindow = window['layui-layer-iframe' + index];
+                                        let doc = $(iframeWindow.document);
+                                        layer.close(index);
+                                    }, cancel: function (layer_window) {
+                                        // 关闭弹出框页面
+                                        layer.close(layer_window);
+                                    }
+                                })
+                            })
+                        })
+                    }
+                }
+            })
+        }
+        function getPage(){
+            console.log(total)
+            console.log(limit)
+            laypage.render({
+                elem: 'test1' //注意，这里的 test1 是 ID，不用加 # 号
+                ,count: total, //数据总数，从服务端得到
+                limit:limit,   //每页条数设置
+                jump: function(obj, first){
+                    //obj包含了当前分页的所有参数，比如：
+                    console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                    console.log(obj.limit); //得到每页显示的条数
+                    page=obj.curr;  //改变当前页码
+                    limit=obj.limit;
+                    //首次不执行
+                    if(!first){
+                        allbook()  //加载数据
+                    }
+                }
+            });
+        }
+        $("#searchBook").click(function () {
+            var bookName=$("#bookName").val();
+            var author=$("#author").val();
+            var publishinghouse=$("#publishinghouse").val();
+            var price=$("#price").val();
+            console.log(bookName)
+            console.log(author)
+            console.log(publishinghouse)
+            console.log(price)
+            var str={
+                "pageNum":1,
+                "pageSize":10,
+                "bookname":bookName,
+                "author":author,
+                "publishinghouse":publishinghouse,
+                "price":price
+            }
+            $.ajax({
+                url: "/bookMall/book/queryBookByType",
+                method: "post",
+                contentType: "application/json",
+                data: JSON.stringify(str),
+                success: function (res) {
+                    console.log(res)
+                    if (res.code==1){
+                        $("#appendh").html("");
+                        res.data.list.forEach(function (element) {
+                            var bookname = element.bookname;
+                            var img = element.bookImg;
+                            console.log(bookname)
+                            console.log(img)
+                            var price = element.price;
+                            var bookid = element.bookId;
+
+                            $("#appendh").append('<div class="layui-col-md2 layui-col-sm4" style="margin-right: 50px" id="bookDetail'+bookid+'">\n' +
+                                '            <div class="cmdlist-container">\n' +
+                                '                <a href="javascript:;">\n' +
+                                '                    <img src='+img+'>\n' +
+                                '                </a>\n' +
+                                '                <a href="javascript:;">\n' +
+                                '                    <div class="cmdlist-text">\n' +
+                                '                        <p class="info">'+bookname+'</p>\n' +
+                                '                        <div class="price">\n' +
+                                '                            <b style="color: red">¥'+price+'</b>\n' +
+                                '                            <p class="layui-inline" style="margin-left: 20px">\n' +
+                                '                                ¥\n' +
+                                '                                <del>130</del>\n' +
+                                '                            </p>\n' +
+                                '                        </div>\n' +
+                                '                    </div>\n' +
+                                '                </a>\n' +
+                                '            </div>\n' +
+                                '        </div>');
+                            $("#bookDetail"+bookid+"").click(function () {
+                                layer.open({
+                                    type:2,
+                                    title:'图书详情',
+                                    content: 'bookDetailInfo',
+                                    maxmin: true
+                                    ,area: ['100%', '100%']
+                                    ,btn: ['确定', '取消']
+                                    ,success:function (layero, index) {
+                                        let iframeWindow = window['layui-layer-iframe'+ index];
+                                        console.log(iframeWindow)
+                                        let doc = $(iframeWindow.document);
+                                        console.log(doc);
+                                        console.log(element.bookname);
+                                        console.log(doc.find("#bookname").text())
+                                        doc.find("#bookId").text(element.bookId);
+                                        doc.find("#bookname").text(element.bookname);
+                                        doc.find("#briefintroduction").text(element.briefintroduction);
+                                        doc.find("#author").text(element.author);
+                                        doc.find("#publishinghouse").text(element.publishinghouse);
+                                        doc.find("#publishdate").text(element.publishdate);
+                                        doc.find("#bookimg").attr("src",element.bookImg);
+                                    },
+                                    yes: function(index, layero){
+                                        let iframeWindow = window['layui-layer-iframe'+ index];
+                                        let doc = $(iframeWindow.document);
+                                        layer.close(index);
+                                    },cancel: function (layer_window) {
+                                        // 关闭弹出框页面
+                                        layer.close(layer_window);
+                                    }
+                                })
+                            })
+                        })
+                    }
+                }
+            })
+        })
+    });
+</script>
+</body>
+</html>

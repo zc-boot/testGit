@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layui/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/css/daifukuan.css" media="all">
+    <link rel="stylesheet" href="/static/css/city-picker/city-picker.css" media="all">
+</head>
+<body>
+<div class="pendingPay">
+    <ul class="settlementTitle">
+        <li>
+            <span>商品名称</span>
+        </li>
+        <li>
+            <span>数量</span>
+        </li>
+        <li>
+            <span>总价</span>
+        </li>
+        <li class="daizhifuText">
+            <span style="color: red ">待支付</span>
+        </li>
+    </ul>
+    <div>
+        <p id="pendingHide">
+            <ul class="goodInfoUl">
+                <li>
+                    <img src="http://localhost:8091/static/images/santi.jpg" class="bookImg">
+                    <span class="bookname">三体</span>
+                </li>
+                <li>
+                    <span class="num">1</span>
+                </li>
+                <li>
+                    <p class="amount">56.0</p>
+                </li>
+            </ul>
+        </p>
+    </div>
+    <div class="shifuDiv">
+
+        <div>实付：</div>
+        <div id="shifu" >￥56.0</div>
+    </div>
+    <div class="daizhifu">
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal">取消支付</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" >去支付</button>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/static/layui/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form','jquery','table','layer'], function() {
+            var $ = layui.jquery,
+                form = layui.form,
+                admin = layui.admin,
+                layer = layui.layer,
+                table = layui.table;
+            $("#pendingHide").click(function () {
+
+            })
+        })
+</script>
+</body>
+</html>
